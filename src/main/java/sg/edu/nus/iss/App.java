@@ -10,7 +10,7 @@ public class App {
 
         boolean exit = false;
 
-        do {
+        while (!exit) {
             Scanner scanner = new Scanner(System.in);
             String input = scanner.nextLine();
 
@@ -19,7 +19,6 @@ public class App {
             }
 
             if (input.startsWith("list")) {
-                // if (input.equals("list")){
                 if (cart.isEmpty()) {
                     System.out.println("Your cart is empty");
                 } else
@@ -29,7 +28,6 @@ public class App {
             }
 
             if (input.startsWith("add")) {
-                // if (input.substring(0, 3).equals("add")){
                 String items = input.substring(4, input.length());
                 String[] result = items.split(", ");
                 for (String item : result) {
@@ -54,6 +52,6 @@ public class App {
                 }
             }
 
-        } while (!exit);
+        }
     }
 }
