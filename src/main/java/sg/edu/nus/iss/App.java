@@ -1,18 +1,54 @@
 package sg.edu.nus.iss;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class App {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
+
+        Path dbDir;
+
+        if (args.length == 0) {
+            System.out.println("Argument is empty");
+            dbDir = Paths.get("db");
+        } else {
+            dbDir = Paths.get(args[0]);
+        }
+
+        try {
+            Files.createDirectories(dbDir);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         System.out.println("Welcome to your shopping cart");
         ArrayList<String> cart = new ArrayList<String>();
-
+        Scanner scanner = new Scanner(System.in);
         boolean exit = false;
+        String fileName = "";
+        String dirPathFileName = "";
 
         while (!exit) {
-            Scanner scanner = new Scanner(System.in);
             String input = scanner.nextLine();
+
+
+            if (input.startsWith("login")) {
+                fileName = input.substring(6, input.length()).trim();
+                dirPathFileName = dbDir + File.separator + fileName;
+                File file = new File(dirPathFileName);
+                if (file.exists()) {
+                    System.out.println("file exists");
+                } else {
+                    file.createNewFile();
+                    System.out.println(fileName + ", your cart is empty");
+                }
+            }
 
             if (input.equals("exit")) {
                 exit = true;
@@ -44,37 +80,50 @@ public class App {
 
                 // String content = "";
                 // while(scan.hasNext()){
-                //     content = scan.next();
-                //     cart.add(content);
+                // content = scan.next();
+                // cart.add(content);
                 // }
             }
 
             if (input.startsWith("delete")) {
                 // int itemIndex = Integer.parseInt(input.substring(7, input.length()));
                 // if (itemIndex < 1 || itemIndex > cart.size()) {
-                //     System.out.println("Incorrect item index");
+                // System.out.println("Incorrect item index");
                 // } else {
-                //     String removedItem = cart.get(itemIndex - 1);
-                //     cart.remove(itemIndex - 1);
-                //     System.out.printf("%s removed from cart\n", removedItem);
+                // String removedItem = cart.get(itemIndex - 1);
+                // cart.remove(itemIndex - 1);
+                // System.out.printf("%s removed from cart\n", removedItem);
                 // }
 
                 Scanner scan = new Scanner(input.substring(6));
 
                 String content = "";
-                while (scan.hasNext()){
+                while (scan.hasNext()) {
                     content = scan.next();
 
                     int listIndex = Integer.parseInt(content);
 
-                    if (listIndex <= cart.size()){
-                        cart.remove(listIndex-1);
+                    if (listIndex <= cart.size()) {
+                        cart.remove(listIndex - 1);
                     } else {
                         System.err.println("Incorrect item index");
                     }
                 }
             }
 
+            if (input.startsWith("save")) {
+                File file = new File(dirPathFileName);
+                System.out.println(dirPathFileName);
+                if (file.exists()) {
+                    for (String i : cart) {
+                        FileWriter fw = new FileWriter(file, false);
+                        fw.write(i + "\n");
+                        fw.close();
+                    }
+                } else {
+                    System.out.println("Please log in as user first.");
+                }
+            }
         }
     }
 }
